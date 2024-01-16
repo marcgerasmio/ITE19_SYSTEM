@@ -73,14 +73,16 @@ function CarCard({ car, onClickBuyNow }) {
   };
 
   return (
-    <div style={{ border: '1px solid #ddd', padding: '10px', margin: '10px', width: '300px' }}>
-      <h3>{vehicle_name}</h3>
-      {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
-      <h6>Price: ₱{price}</h6>
+    <div style={{ border: 'none', padding: '10px', margin: '10px', width: '300px', display: 'flex', flexDirection: 'column' }}>
+    {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
+    <h3>"{vehicle_name}"</h3>
+    <h5>₱{price}</h5>
+    
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <p>Stocks: {stocks}</p>
-
       <button onClick={handleBuyNowClick}>Buy Now</button>
     </div>
+  </div>
   );
 }
 export default Dealer;

@@ -17,6 +17,10 @@ function BuyNow(){
     const VIN = localStorage.getItem('VIN');
     const brand_name = localStorage.getItem('brand_name');
     const image_path = localStorage.getItem('image_path')
+    
+    const cancel = () => {
+        navigate("/customer");
+    }
 
     const deduct = async () => {
         const car_name = localStorage.getItem('vehicle_name');
@@ -66,7 +70,7 @@ function BuyNow(){
     
             console.log(data);
             alert('Order Successful');
-            navigate('/customerhistory');
+            navigate('/customerpurchase');
         } 
         catch (error) {
           console.error('Error during login:', error.message);
@@ -77,17 +81,16 @@ function BuyNow(){
     return(
         <>
             <UserNavbar />
-            <Container className='mt-5'>
-                <Card className='mt-5' style={{ 
+            <Container className='justify-content-center d-flex'>
+                <Card className='mt-3 ' style={{ 
                     boxShadow: 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px',
                     padding: '20px 20px'
                 }}>
                     <Row>
-                        <Col><Card.Img src={image_path}/></Col>
+                        <Card.Img src={image_path}/>
                         <Col>
                             <div>
-                                <Card.Title className="mt-3">{vehicle_name}</Card.Title>
-                                <Card.Title className="mt-3">{brand_name}</Card.Title>
+                                <Card.Title className="mt-3">{brand_name} - {vehicle_name}</Card.Title>
                                 <Card.Title className="mt-1">₱{price}</Card.Title><br/>
                                 <Card.Text>
                                     <Row>
@@ -120,6 +123,14 @@ function BuyNow(){
                                     </Row>
                                 </Card.Text>
                                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                <Button 
+                                        variant="outline-dark" 
+                                        className="check-out w-50 me-2"
+                                        onClick={cancel}
+                                        style={{height: "55px"}}
+                                    >
+                                       Cancel
+                                    </Button>
                                     <Button 
                                         variant="dark" 
                                         className="check-out w-50"
@@ -128,6 +139,7 @@ function BuyNow(){
                                     >
                                         Buy Now
                                     </Button>
+                                   
                                 </div>
                                 {error && <p>{error}</p>}
                             </div>

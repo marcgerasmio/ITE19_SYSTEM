@@ -8,6 +8,17 @@ const CustomerHistory = () => {
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const name = localStorage.getItem('name');
 
+  const formatDateTime = (dateTimeString) => {
+    const options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    };
+    return new Date(dateTimeString).toLocaleString(undefined, options);
+  };
   const fetchPurchaseHistory = async () => {
     try {
       const { data, error } = await supabase
@@ -58,7 +69,7 @@ const CustomerHistory = () => {
               <td>{purchase.vehicle_type}</td>
               <td>{purchase.color}</td>
               <td>{purchase.transmission}</td>
-              <td>{purchase.created_at}</td>
+              <td>{formatDateTime(purchase.created_at)}</td>
             </tr>
           ))}
         </tbody>

@@ -24,7 +24,7 @@ function App() {
     <Route path="/dealerconfirm" element = {<DealerConfirm />}/>
     <Route path="/dealerinventory" element = {<DealerInventory />}/>
     <Route path="/customerconfirm" element = {<CustomerConfirm />}/>
-    <Route path="/customerhistory" element = {<CustomerHistory />}/>
+    <Route path="/customerpurchase" element = {<CustomerHistory />}/>
     <Route path="/logout" element = {<Logout />}/>
     <Route path="/sales" element = {<DealerSales />}/>
     <Route path="/trial" element = {<CustomerHome />}/>

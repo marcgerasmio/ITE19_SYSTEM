@@ -8,8 +8,8 @@ import { FiFilter } from 'react-icons/fi';
 const Customer = () => {
   const [carData, setCarData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -42,109 +42,97 @@ const Customer = () => {
     setSelectedBrand(brand);
   };
 
-  const filteredCarData = selectedBrand
-    ? carData.filter((car) => car.brand_name === selectedBrand)
-    : carData;
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredCarData = carData
+    ? carData.filter((car) => {
+        const byBrand = !selectedBrand || car.brand_name === selectedBrand;
+        const bySearch = car.vehicle_name.toLowerCase().startsWith(searchQuery.toLowerCase());
+        return byBrand && bySearch;
+      })
+    : [];
 
   return (
     <div>
       <UserNavbar />
-      <h2>Car List</h2>
 
-      {error && <p>{error}</p>}
-      <>
-        <div className='row'>
-          <div className='side'>
-            <h5 className='mb-4 justify-content-center d-flex'><FiFilter /> Search Filter</h5>
-            <Form className='mb-3'>
-              <Form.Control
-                type="search"
-                placeholder="Search here. . ."
-                aria-label="Search"
+      <div className='row'>
+        <div className='side'>
+          <h5 className='mb-4 justify-content-center d-flex'><FiFilter /> Search Filter</h5>
+          <Form className='mb-3'>
+            <Form.Control
+              type="search"
+              placeholder="Search here. . ."
+              aria-label="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </Form>
+          <hr />
+          <h6 className='mb-3'>By Brands</h6>
+          <Form>
+            <div key="inline-radio" className="mb-3">
+              <Form.Check
+                inline
+                label="All"
+                type="radio"
+                id="inline-radio-All"
+                name="carBrand"
+                onChange={() => handleBrandChange('')}
               />
-            </Form>
-            <hr />
-            <h6 className='mb-3'>By Brands</h6>
-            <Form>
-      <div key="inline-radio" className="mb-3">
-      <Form.Check
-          inline
-          label="All"
-          type="radio"
-          id="inline-radio-BMW"
-          name="carBrand"
-          onChange={() => handleBrandChange('')}
-        />
-          <br/>
-        <Form.Check
-          inline
-          label="BMW"
-          type="radio"
-          id="inline-radio-BMW"
-          name="carBrand"
-          onChange={() => handleBrandChange('BMW')}
-        />
-        <br/>
-         <Form.Check
-          inline
-          label="Ford"
-          type="radio"
-          id="inline-radio-Ford"
-          name="carBrand"
-          onChange={() => handleBrandChange('Ford')}
-        />
-        <br/>
-        <Form.Check
-          inline
-          label="Hyundai"
-          type="radio"
-          id="inline-radio-Hyundai"
-          name="carBrand"
-          onChange={() => handleBrandChange('Hyundai')}
-        />
-        <br/>
-        <Form.Check
-          inline
-          label="Kia"
-          type="radio"
-          id="inline-radio-Ford"
-          name="carBrand"
-          onChange={() => handleBrandChange('Kia')}
-        />
-
-      </div>
-    </Form>
-            <hr />
-            <h6 className='mb-3'>Vehicle Type</h6>
-            <Form>
-              {['radio'].map((type) => (
-                <div key={`inline-${type}`} className="mb-3">
-                  <Form.Check
-                    inline
-                    label="1"
-                    name="group1"
-                    type={type}
-                    id={`inline-${type}-1`}
-                  />
-                  <br />
-                  {/* Add similar Form.Check components for other options */}
-                </div>
-              ))}
-            </Form>
-            <hr />
-          </div>
-
-          <div className='main'>
-            {filteredCarData && (
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {filteredCarData.map((car) => (
-                  <CarCard key={car.vin} car={car} onClickBuyNow={onClickBuyNow} />
-                ))}
-              </div>
-            )}
-          </div>
+              <br/>
+              <Form.Check
+                inline
+                label="BMW"
+                type="radio"
+                id="inline-radio-BMW"
+                name="carBrand"
+                onChange={() => handleBrandChange('BMW')}
+              />
+              <br/>
+              <Form.Check
+                inline
+                label="Ford"
+                type="radio"
+                id="inline-radio-Ford"
+                name="carBrand"
+                onChange={() => handleBrandChange('Ford')}
+              />
+              <br/>
+              <Form.Check
+                inline
+                label="Hyundai"
+                type="radio"
+                id="inline-radio-Hyundai"
+                name="carBrand"
+                onChange={() => handleBrandChange('Hyundai')}
+              />
+              <br/>
+              <Form.Check
+                inline
+                label="Kia"
+                type="radio"
+                id="inline-radio-Kia"
+                name="carBrand"
+                onChange={() => handleBrandChange('Kia')}
+              />
+            </div>
+          </Form>
+          <hr />
         </div>
-      </>
+
+        <div className='main'>
+          {filteredCarData && (
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {filteredCarData.map((car) => (
+                <CarCard key={car.vin} car={car} onClickBuyNow={onClickBuyNow} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -157,18 +145,23 @@ function CarCard({ car, onClickBuyNow }) {
   };
 
   return (
-    <div style={{ border: 'none', padding: '10px', margin: '10px', width: '300px', display: 'flex', flexDirection: 'column' }}>
-    <h5>{brand_name}</h5>
-    {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
-    <h3>"{vehicle_name}"</h3>
-    <h5>₱{price}</h5>
-    
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <p>Stocks: {stocks}</p>
-      <button onClick={handleBuyNowClick}>Buy Now</button>
+<div style={{ border: 'none', padding: '10px', margin: '10px', width: '300px', display: 'flex', flexDirection: 'column' }}>
+      <h5>{brand_name}</h5>
+      {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
+      <h3>"{vehicle_name}"</h3>
+      <h5>₱{price}</h5>
+      
+      {stocks > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p>Stocks: {stocks}</p>
+          <button onClick={handleBuyNowClick}>Buy Now</button>
+        </div>
+      )}
+
+      {stocks <= 0 && (
+        <p>Sold Out</p>
+      )}
     </div>
-  </div>
-  
   );
 }
 
