@@ -12,7 +12,6 @@ const UserNavbar = () => {
         <Nav className="ml-auto">
           <Nav.Link href="/customer">BuyCars</Nav.Link>
           <Nav.Link href="/customerhistory">Purchase History</Nav.Link>
-          <Nav.Link href="/buyparts">OrderParts</Nav.Link>
           <Nav.Link href="/logout">Logout</Nav.Link>
         </Nav>
       </Navbar.Collapse>

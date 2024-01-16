@@ -1,128 +1,143 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import supabase from '../config/supabaseClient.js';
 import UserNavbar from './usernavbar.js';
 import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Card, Form, Button, FloatingLabel } from 'react-bootstrap';
 
-const CustomerConfirm = () => {
-  const [error, setError] = useState(null);
-  const [carColor, setCarColor] = useState('Red');
-  const [carEngine, setCarEngine] = useState('v4');
-  const [transmissionType, setTransmissionType] = useState('Automatic');
-  const navigate = useNavigate();
+function BuyNow(){
+    const [error, setError] = useState(null);
+    const [Color, setColor] = useState('Red');
+    const [Transmission, setTransmission] = useState('Automatic');
+    const navigate = useNavigate();
 
+    const name = localStorage.getItem('name');
+    const vehicle_name = localStorage.getItem('vehicle_name');
+    const vehicle_type = localStorage.getItem('vehicle_type');
+    const price = localStorage.getItem('price');
+    const VIN = localStorage.getItem('VIN');
+    const brand_name = localStorage.getItem('brand_name');
+    const image_path = localStorage.getItem('image_path')
 
-  const customer_name = localStorage.getItem('customer_name');
-  const car_name = localStorage.getItem('car_name');
-  const car_style = localStorage.getItem('car_style');
-  const car_price = localStorage.getItem('price');
-  const image_path = localStorage.getItem('image_path');
-  const VIN = localStorage.getItem('VIN');
-  const dealer_name = localStorage.getItem('dealer_name');
+    const deduct = async () => {
+        const car_name = localStorage.getItem('vehicle_name');
+        const { data } = await supabase
+        .from('Dealer_Inventory')
+        .select('*')
+        .eq('vehicle_name', vehicle_name)
+        .single();
 
-  const buyconfirm = async () => {
-    try {
-      const { data } = await supabase
-        .from('customer_purchase')
-        .insert([
-          {
-            customer_name,
-            car_name,
-            car_style,
-            car_price,
-            image_path,
-            car_color: carColor,
-            car_engine: carEngine,
-            transmission_type: transmissionType,
-            VIN,
-          },
-        ])
-        .select();
+        console.log(data);
+        const newstocks = data.stocks;
+        localStorage.setItem('newstocks', newstocks);
 
-      console.log(data);
-      alert('Order Successful');
-      dealersales();
-      navigate('/customer');
-    } catch (error) {
-      console.error('Error during login:', error.message);
-      setError(error.message);
+        try {
+          const deductedstocks = localStorage.getItem('newstocks')
+          console.log(deductedstocks);
+          let newStocks = parseInt(deductedstocks) - 1;
+            const { data } = await supabase
+            .from('Dealer_Inventory')
+            .update({ 'stocks': newStocks })    
+            .eq('vehicle_name', vehicle_name);
+            console.log(data);
+            buyconfirm();
+        } 
+        catch(error) {
+            console.error('Error during login:', error.message); 
+        }
     }
-  };
-  const dealersales = async () => {
-    try {
-      const { data } = await supabase
-        .from('dealer_sales')
-        .insert([
-          {
-            dealer_name,
-            customer_name,
-            car_name,
-            car_style,
-            car_price,
-            image_path,
-            car_color: carColor,
-            car_engine: carEngine,
-            transmission_type: transmissionType,
-            VIN,
-          },
-        ])
-        .select();
 
-      console.log(data);
-    } catch (error) {
-      console.error('Error during login:', error.message);
-      setError(error.message);
-    }
-  };
+    const buyconfirm = async () => {
+        try {
+            const { data } = await supabase
+            .from('Sales')
+            .insert([
+                {
+                    name,
+                    vehicle_name,
+                    vehicle_type,
+                    price,
+                    color: Color,
+                    transmission: Transmission,
+                    VIN,
+                    brand_name,
+                },
+            ])
+            .select();
+    
+            console.log(data);
+            alert('Order Successful');
+            navigate('/customerhistory');
+        } 
+        catch (error) {
+          console.error('Error during login:', error.message);
+          setError(error.message);
+        }
+    };
 
-  return (
-    <div>
-      <UserNavbar />
-      <div>
-        <h2>Confirm Your Purchase</h2>
-        <p>Customer Name: {customer_name}</p>
-        <p>Car Name: {car_name}</p>
-        <p>Car Style: {car_style}</p>
-        <p>Price: {car_price}</p>
-        <p>Image Path: {image_path}</p>
+    return(
+        <>
+            <UserNavbar />
+            <Container className='mt-5'>
+                <Card className='mt-5' style={{ 
+                    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px',
+                    padding: '20px 20px'
+                }}>
+                    <Row>
+                        <Col><Card.Img src={image_path}/></Col>
+                        <Col>
+                            <div>
+                                <Card.Title className="mt-3">{vehicle_name}</Card.Title>
+                                <Card.Title className="mt-3">{brand_name}</Card.Title>
+                                <Card.Title className="mt-1">₱{price}</Card.Title><br/>
+                                <Card.Text>
+                                    <Row>
+                                        <Col>
+                                            <FloatingLabel
+                                                controlId="floatingSelectGrid"
+                                                label="Choose car color : "
+                                            >
+                                                <Form.Select value={Color} onChange={(e) => setColor(e.target.value)} aria-label="Floating label select example">
+                                                    <option value="Red">Red</option>
+                                                    <option value="White">White</option>
+                                                    <option value="Black">Black</option>
+                                                </Form.Select>
+                                            </FloatingLabel>
+                                        </Col>
+                                        <Row>
+                                            <Col>
+                                                <FloatingLabel
+                                                    className="mt-3"
+                                                    controlId="floatingSelectGrid"
+                                                    label="Transmission Type : "
+                                                >
+                                                    <Form.Select value={Transmission} onChange={(e) => setTransmission(e.target.value)} aria-label="Floating label select example">
+                                                        <option value="Automatic">Automatic</option>
+                                                        <option value="Manual">Manual</option>
+                                                    </Form.Select>
+                                                </FloatingLabel>
+                                            </Col>
+                                        </Row>
+                                    </Row>
+                                </Card.Text>
+                                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Button 
+                                        variant="dark" 
+                                        className="check-out w-50"
+                                        onClick={deduct}
+                                        style={{height: "55px"}}
+                                    >
+                                        Buy Now
+                                    </Button>
+                                </div>
+                                {error && <p>{error}</p>}
+                            </div>
+                        </Col>
+                    </Row>
+                </Card>
+            </Container>
+            
+        </>
+    );
+}
 
-        <label>
-          Car Color:
-          <select value={carColor} onChange={(e) => setCarColor(e.target.value)}>
-            <option value="Red">Red</option>
-            <option value="Blue">Blue</option>
-            <option value="Green">Green</option>
-            {/* Add more color options as needed */}
-          </select>
-        </label>
-        <br />
-
-        <label>
-          Car Engine:
-          <select value={carEngine} onChange={(e) => setCarEngine(e.target.value)}>
-            <option value="v4">V4</option>
-            <option value="v6">V6</option>
-            <option value="v8">V8</option>
-            {/* Add more engine options as needed */}
-          </select>
-        </label>
-        <br />
-
-        <label>
-          Transmission Type:
-          <select value={transmissionType} onChange={(e) => setTransmissionType(e.target.value)}>
-            <option value="Automatic">Automatic</option>
-            <option value="Manual">Manual</option>
-            {/* Add more transmission type options as needed */}
-          </select>
-        </label>
-        <br />
-
-        <button onClick={buyconfirm}>Buy Confirm</button>
-
-        {error && <p>{error}</p>}
-      </div>
-    </div>
-  );
-};
-
-export default CustomerConfirm;
+export default BuyNow;

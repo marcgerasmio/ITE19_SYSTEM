@@ -6,14 +6,14 @@ import UserNavbar from './usernavbar.js';
 const CustomerHistory = () => {
   const [error, setError] = useState(null);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
-  const customerName = localStorage.getItem('customer_name');
+  const name = localStorage.getItem('name');
 
   const fetchPurchaseHistory = async () => {
     try {
       const { data, error } = await supabase
-        .from('customer_purchase')
+        .from('Sales')
         .select('*')
-        .eq('customer_name', customerName);
+        .eq('name', name);
 
       if (error) {
         throw error;
@@ -28,7 +28,7 @@ const CustomerHistory = () => {
 
   useEffect(() => {
     fetchPurchaseHistory();
-  }, [customerName]);
+  }, [name]);
 
   return (
     <div>
@@ -40,12 +40,11 @@ const CustomerHistory = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
+          <th>Brand</th>
           <th>Car Name</th>
-          <th>Image</th>
           <th>Car Price</th>
-            <th>Car Color</th>
-            <th>Car Engine</th>
-            <th>Car Style</th>
+          <th>Car Style</th>
+            <th>Car Color</th>   
             <th>Transmission Type</th>
             <th>Time</th>
           </tr>
@@ -53,16 +52,13 @@ const CustomerHistory = () => {
         <tbody>
           {purchaseHistory.map((purchase) => (
             <tr key={purchase.id}>
-              <td>{purchase.car_name}</td>
-              <td>
-                <img src={purchase.image_path} alt="Car" style={{ width: '50px' }} />
-              </td>
-              <td>{purchase.car_price}</td>
-              <td>{purchase.car_color}</td>
-              <td>{purchase.car_engine}</td>
-              <td>{purchase.car_style}</td>
-              <td>{purchase.transmission_type}</td>
-              <td>{purchase.time}</td>
+              <td>{purchase.brand_name}</td>
+              <td>{purchase.vehicle_name}</td>
+              <td>₱{purchase.price}</td>
+              <td>{purchase.vehicle_type}</td>
+              <td>{purchase.color}</td>
+              <td>{purchase.transmission}</td>
+              <td>{purchase.created_at}</td>
             </tr>
           ))}
         </tbody>

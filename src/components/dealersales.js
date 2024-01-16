@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Container } from 'react-bootstrap';
 import supabase from '../config/supabaseClient.js';
 import DealerNavbar from './dealernavbar.js';
 
@@ -7,14 +7,18 @@ import DealerNavbar from './dealernavbar.js';
 const DealerSales = () => {
   const [error, setError] = useState(null);
   const [dealerSales, setdealerSales] = useState([]);
-  const dealerName = localStorage.getItem('name');
+  const [dealerName, setDealerName] = useState('');
+
 
   const sales = async () => {
+    const name = localStorage.getItem('name');
+    setDealerName(name);
+
     try {
       const { data, error } = await supabase
-        .from('dealer_sales')
+        .from('Sales')
         .select('*')
-        .eq('dealer_name', dealerName);
+        .eq('brand_name', name);
 
       if (error) {
         throw error;
@@ -34,7 +38,11 @@ console.log(data);
   return (
     <div>
       <DealerNavbar />
-      <h2>Sales</h2>
+      <Container className='mt-3'>
+          <div className='div'>
+            <h1 style={{ fontSize: '40px', fontFamily: 'louis-bold' }}>{dealerName}'s Sales</h1>
+          </div>
+        </Container>
 
       {error && <p>{error}</p>}
 
@@ -43,10 +51,8 @@ console.log(data);
           <tr>
             <th>Customer Name</th>
           <th>Car Name</th>
-          <th>Image</th>
           <th>Car Price</th>
             <th>Car Color</th>
-            <th>Car Engine</th>
             <th>Car Style</th>
             <th>Transmission Type</th>
             <th>Time</th>
@@ -55,17 +61,13 @@ console.log(data);
         <tbody>
           {dealerSales.map((purchase) => (
             <tr key={purchase.id}>
-            <td>{purchase.customer_name}</td>
-              <td>{purchase.car_name}</td>
-              <td>
-                <img src={purchase.image_path} alt="Car" style={{ width: '50px' }} />
-              </td>
-              <td>{purchase.car_price}</td>
-              <td>{purchase.car_color}</td>
-              <td>{purchase.car_engine}</td>
-              <td>{purchase.car_style}</td>
-              <td>{purchase.transmission_type}</td>
-              <td>{purchase.time}</td>
+            <td>{purchase.name}</td>
+              <td>{purchase.vehicle_name}</td>
+              <td>₱{purchase.price}</td>
+              <td>{purchase.color}</td>
+              <td>{purchase.vehicle_type}</td>
+              <td>{purchase.transmission}</td>
+              <td>{purchase.created_at}</td>
             </tr>
           ))}
         </tbody>

@@ -14,9 +14,9 @@ const Dealer = () => {
     try {
   
       const { data } = await supabase
-        .from('cars')
+        .from('Vehicles')
         .select('*') 
-      .eq('dealer_name', dealerName);
+      .eq('brand_name', dealerName);
 
     console.log(data);
     setCarData(data);
@@ -30,10 +30,10 @@ const Dealer = () => {
 
 
   const onClickBuyNow = (car) => {
-    const { dealer_name, car_name, car_style, price, VIN,image_path } = car;
-    localStorage.setItem('dealer_name', dealer_name);
-    localStorage.setItem('car_name', car_name);
-    localStorage.setItem('car_style', car_style);
+    const { brand_name, vehicle_name, vehicle_type, price, VIN,image_path } = car;
+    localStorage.setItem('brand_name', brand_name);
+    localStorage.setItem('vehicle_name', vehicle_name);
+    localStorage.setItem('vehicle_type', vehicle_type);
     localStorage.setItem('price', price);
     localStorage.setItem('VIN', VIN);
     localStorage.setItem('image_path', image_path);
@@ -66,7 +66,7 @@ const Dealer = () => {
 };
 
 function CarCard({ car, onClickBuyNow }) {
-  const {car_name, price,image_path, VIN,car_style,dealer_name  } = car;
+  const {vehicle_name, price,image_path, VIN,vehicle_type,dealer_name, stocks  } = car;
 
   const handleBuyNowClick = () => {
     onClickBuyNow(car);
@@ -74,9 +74,11 @@ function CarCard({ car, onClickBuyNow }) {
 
   return (
     <div style={{ border: '1px solid #ddd', padding: '10px', margin: '10px', width: '300px' }}>
-      <h3>{car_name}</h3>
-      {image_path && <img src={image_path} alt={car_name} style={{ maxWidth: '100%' }} />}
-      <p>Price: {price}</p>
+      <h3>{vehicle_name}</h3>
+      {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
+      <h6>Price: ₱{price}</h6>
+      <p>Stocks: {stocks}</p>
+
       <button onClick={handleBuyNowClick}>Buy Now</button>
     </div>
   );

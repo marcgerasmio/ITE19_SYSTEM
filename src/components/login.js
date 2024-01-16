@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import supabase from '../config/supabaseClient.js';
 import { useNavigate } from 'react-router-dom';
+import { Card, Form, FloatingLabel, Row, Col, Button } from 'react-bootstrap';
+import { AiOutlineUser } from 'react-icons/ai';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +14,7 @@ const Login = () => {
   const validateCustomer = async () => {
     try {
       const { data } = await supabase
-        .from('customer')
+        .from('Customer')
         .select('*')
         .eq('email', email)
         .single();
@@ -20,9 +22,9 @@ const Login = () => {
       if (data && data.password === password) {
         console.log('Login successful');
         console.log(data);
-        const customer_name = data.customer_name;
-        localStorage.setItem('customer_name', customer_name);
-    console.log(customer_name);
+        const name = data.name;
+        localStorage.setItem('name', name);
+    console.log(name);
         navigate("/customer");
         setErrorMessage('');
       } else {
@@ -38,7 +40,7 @@ const Login = () => {
   const validateDealer = async () => {
     try {
       const { data } = await supabase
-        .from('dealer')
+        .from('Dealers')
         .select('*')
         .eq('email', email)
         .single();
@@ -71,26 +73,53 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <div>
-        <label>Email:</label>
-        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+    <>
+      <div className="login-container">
+        <Card className="card-container">
+          <Card.Body>
+            <AiOutlineUser size={50} className="user-icon" />
+            <h2 className="title">User Login</h2>
+
+            <FloatingLabel controlId="floatingInput" label="Email address" className="mb-3">
+              <Form.Control type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </FloatingLabel>
+
+            <FloatingLabel controlId="floatingPassword" label="Password" className="mb-3">
+              <Form.Control type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            </FloatingLabel>
+
+            <Row>
+              <Col>
+                <FloatingLabel controlId="floatingSelect" label="Login as: " className="mb-3 form-label">
+                  <Form.Select aria-label="Floating label select example" value={userType} onChange={(e) => setUserType(e.target.value)}>
+                    <option value="customer">Customer</option>
+                    <option value="dealer">Dealer</option>
+                  </Form.Select>
+                </FloatingLabel>
+              </Col>
+
+              <Col>
+                <Button type="submit" className="w-100 submit-button" onClick={handleClick}>
+                  Log In
+                </Button>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
       </div>
-      <div>
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      <div>
-        <label>User Type:</label>
-        <select value={userType} onChange={(e) => setUserType(e.target.value)}>
-          <option value="customer">Customer</option>
-          <option value="dealer">Dealer</option>
-        </select>
-      </div>
-      <button onClick={handleClick}>Login</button>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-    </div>
+      <footer className="py-4 bg-light mt-auto">
+        <div className="container-fluid px-4">
+          <div className="d-flex align-items-center justify-content-between small">
+            <div className="text-muted">Copyright &copy; SuperWheels</div>
+            <div>
+              <a href="#fay">Privacy Policy</a>
+              &middot;
+              <a href="#fay">Terms &amp; Conditions</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 };
 

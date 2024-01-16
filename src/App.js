@@ -11,6 +11,7 @@ import CustomerConfirm from "./components/confirmcustomerbuy";
 import Logout from "./components/logout";
 import CustomerHistory from "./components/customerhistory";
 import DealerSales from "./components/dealersales";
+import CustomerHome from "./components/trial";
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
     <Route path="/customerhistory" element = {<CustomerHistory />}/>
     <Route path="/logout" element = {<Logout />}/>
     <Route path="/sales" element = {<DealerSales />}/>
+    <Route path="/trial" element = {<CustomerHome />}/>
+
 
 
 

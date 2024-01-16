@@ -14,9 +14,9 @@ const DealerInventory = () => {
     try {
   
       const { data } = await supabase
-        .from('dealer_inventory')
+        .from('Dealer_Inventory')
         .select('*') 
-      .eq('dealer_name', dealerName);
+      .eq('brand_name', dealerName);
 
     console.log(data);
     setCarData(data);
@@ -52,15 +52,17 @@ const DealerInventory = () => {
 };
 
 function CarCard({ car, onClickBuyNow }) {
-  const {car_name, price,image_path, VIN,car_style,dealer_name  } = car;
+  const {vehicle_name, price,image_path,stocks } = car;
 
  
 
   return (
     <div style={{ border: '1px solid #ddd', padding: '10px', margin: '10px', width: '300px' }}>
-      <h3>{car_name}</h3>
-      {image_path && <img src={image_path} alt={car_name} style={{ maxWidth: '100%' }} />}
-      <p>Price: {price}</p>
+      <h3>{vehicle_name}</h3>
+      {image_path && <img src={image_path} alt={vehicle_name} style={{ maxWidth: '100%' }} />}
+      <p>Price:₱{price}</p>
+      <p>Stocks: {stocks}</p>
+
     </div>
   );
 }
